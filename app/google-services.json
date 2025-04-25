@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "176126295749",
+    "project_id": "chamsocthucung-1adf7",
+    "storage_bucket": "chamsocthucung-1adf7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:176126295749:android:3153ff41d9f0d401a7baac",
+        "android_client_info": {
+          "package_name": "com.example.chamsocthucung2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "176126295749-fdrkc3fto2djmpsgote49qr0s2lrgs7v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chamsocthucung2",
+            "certificate_hash": "ff83d2dad7c24b8f989ab0cc081308a1b2838b70"
+          }
+        },
+        {
+          "client_id": "176126295749-1d83t9jbloe9m5lj7d4jfg8d7u3rnjsq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNKvEtrA7HhrGs9E0pPsjyeUO9WUxogPg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "176126295749-1d83t9jbloe9m5lj7d4jfg8d7u3rnjsq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
