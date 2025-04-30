@@ -1,10 +1,10 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.compose")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
     id("com.google.gms.google-services")
+    id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
-
 }
 
 android {
@@ -111,7 +111,8 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("androidx.room:room-runtime:2.5.2")
     implementation("io.coil-kt:coil-compose:2.4.0")
-
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-compiler:2.48")
     implementation(libs.retrofit)
     implementation(libs.retrofit2.converter.gson)
 
@@ -120,12 +121,12 @@ dependencies {
 //        implementation("androidx.appcompat:appcompat:1.7.0-alpha03")
 //    }
     // Testing
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.0")
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit.v115)
+    androidTestImplementation(libs.androidx.espresso.core.v351)
+    androidTestImplementation(libs.ui.test.junit4)
 
     // Debugging
-    debugImplementation("androidx.compose.ui:ui-tooling:1.6.0")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.0")
+    debugImplementation(libs.ui.tooling)
+    debugImplementation(libs.ui.test.manifest)
 }

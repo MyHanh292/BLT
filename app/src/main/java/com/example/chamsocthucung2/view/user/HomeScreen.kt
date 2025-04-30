@@ -113,7 +113,7 @@ fun HomeScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = WindowInsets.statusBars.getTop(LocalDensity.current).dp + 4.dp)
+                    .padding(top = WindowInsets.statusBars.getTop(LocalDensity.current).dp)
                     .padding(horizontal = 16.dp)
             ) {
                 Row(

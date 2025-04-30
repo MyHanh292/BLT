@@ -18,13 +18,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.EmojiEmotions
 import androidx.compose.material.icons.outlined.Image
-import androidx.compose.material.icons.outlined.ThumbUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -34,28 +34,33 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.chamsocthucung2.R
 import com.example.chamsocthucung2.data.model.user.Chat.ChatMessage
+import com.example.chamsocthucung2.utils.parseMarkdown
 import com.example.chamsocthucung2.viewmodel.user.ChatViewModel
 import java.io.File
 
 @Composable
 fun ChatScreen(navController: NavController) {
-    val viewModel: ChatViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    val viewModel: ChatViewModel = hiltViewModel() // Khởi tạo bằng Hilt để Inject GeminiRepository
     val messages by viewModel.messages.collectAsStateWithLifecycle()
     var messageText by remember { mutableStateOf("") }
     val scrollState = rememberLazyListState()
-    val doctorInfo = remember { VetDoctor("Yến Oanh", "...", R.drawable.doctor2) }
+    val doctorInfo = remember { VetDoctor("Trợ lý chó", "...", R.drawable.dog) }
     val context = LocalContext.current
     var showEmojiPicker by remember { mutableStateOf(false) } // State để hiển thị/ẩn bảng emoji
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     val pickImageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let { viewModel.addMessage("[Hình ảnh]", true, uri.toString()) }
@@ -82,14 +87,14 @@ fun ChatScreen(navController: NavController) {
         topBar = { ChatAppBar(navController, doctorInfo) },
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
-            Column {
+            Column(Modifier.navigationBarsPadding()) {
                 UserInput(
                     onMessageChange = { messageText = it },
                     onSendClick = {
                         if (messageText.isNotBlank()) {
-                            viewModel.addMessage(messageText, true)
+                            viewModel.sendMessageToGemini(messageText)
                             messageText = ""
-                            viewModel.simulateReply()
+                            keyboardController?.hide()
                         }
                     },
                     messageText = messageText,
@@ -193,14 +198,30 @@ fun MessageList(messages: List<ChatMessage>, scrollState: LazyListState, content
     }
 }
 
+@Preview
+@Composable
+private fun PreviewMessageBubble() {
+    val mockChatMessage = ChatMessage(
+        id = "",
+        text = "Ok",
+        time = "",
+        isFromUser = false,
+        isRead = false,
+        imageUri = ""
+    )
+    MessageBubble(mockChatMessage)
+}
+
 @Composable
 fun MessageBubble(message: ChatMessage) {
     val isUser = message.isFromUser
     val backgroundColor = if (isUser) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
-    val textColor = Color.White
+    val textColor = if (isUser) Color.White else Color.Black
     val alignment = if (isUser) Arrangement.End else Arrangement.Start
     val bubbleShape = RoundedCornerShape(8.dp)
     val avatarAlignment = if (!isUser) Alignment.Top else Alignment.CenterVertically
+
+    val annotatedString = parseMarkdown(message.text)
 
     var showReactionPopup by remember { mutableStateOf(false) }
     var reactionAnchor by remember { mutableStateOf(IntOffset(0, 0)) }
@@ -215,7 +236,7 @@ fun MessageBubble(message: ChatMessage) {
         if (!isUser) {
             Row(verticalAlignment = Alignment.Bottom) {
                 AsyncImage(
-                    model = R.drawable.doctor2,
+                    model = R.drawable.dog,
                     contentDescription = "Avatar",
                     modifier = Modifier
                         .size(32.dp)
@@ -252,7 +273,7 @@ fun MessageBubble(message: ChatMessage) {
                             )
                         } else {
                             Text(
-                                text = message.text,
+                                text = annotatedString,
                                 color = textColor,
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
